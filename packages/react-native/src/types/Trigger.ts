@@ -34,6 +34,22 @@ export interface TimestampTrigger {
   alarmManager?: boolean | TimestampTriggerAlarmManager | undefined;
 }
 
+export interface WindowTrigger {
+  /**
+   * Constant enum value used to identify the trigger type.
+   */
+  type: TriggerType.WINDOW;
+  /**
+   * The timestamp when the notification should first be shown, in milliseconds since 1970.
+   */
+  timestamp: number;
+
+  /**
+   * The duration (in ms) of the notification window
+   */
+  windowDuration: number;
+}
+
 /**
  * An interface representing the different alarm types which can be used with `TimestampTrigger.alarmManager.type`.
  *
@@ -131,6 +147,7 @@ export enum TimeUnit {
 export enum TriggerType {
   TIMESTAMP = 0,
   INTERVAL = 1,
+  WINDOW = 2,
 }
 
-export declare type Trigger = TimestampTrigger | IntervalTrigger;
+export declare type Trigger = TimestampTrigger | IntervalTrigger | WindowTrigger;

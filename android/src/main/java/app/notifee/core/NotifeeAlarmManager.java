@@ -30,6 +30,7 @@ import app.notifee.core.database.WorkDataEntity;
 import app.notifee.core.database.WorkDataRepository;
 import app.notifee.core.model.NotificationModel;
 import app.notifee.core.model.TimestampTriggerModel;
+import app.notifee.core.model.WindowTriggerModel;
 import app.notifee.core.utility.AlarmUtils;
 import app.notifee.core.utility.ObjectUtils;
 import com.google.android.gms.tasks.Continuation;
@@ -199,6 +200,17 @@ class NotifeeAlarmManager {
           alarmManager, timestampTrigger.getTimestamp(), pendingLaunchIntent, pendingIntent);
         break;
     }
+  }
+
+  static void scheduleWindowTriggerNotification(
+      NotificationModel notificationModel, WindowTriggerModel windowTrigger) {
+
+    PendingIntent pendingIntent = getAlarmManagerIntentForNotification(notificationModel.getId());
+    
+    AlarmManager alarmManager = AlarmUtils.getAlarmManager();
+
+    WindowTriggerModel.AlarmType alarmType = windowTrigger.getAlarmType();
+    alarmManager.setWindow(AlarmManager.RTC_WAKEUP, windowTrigger.getTimestamp(), windowTrigger.getWindowDuration(), pendingIntent);
   }
 
   Task<List<WorkDataEntity>> getScheduledNotifications() {

@@ -57,6 +57,7 @@ import app.notifee.core.model.NotificationAndroidPressActionModel;
 import app.notifee.core.model.NotificationAndroidStyleModel;
 import app.notifee.core.model.NotificationModel;
 import app.notifee.core.model.TimestampTriggerModel;
+import app.notifee.core.model.WindowTriggerModel;
 import app.notifee.core.utility.IntentUtils;
 import app.notifee.core.utility.ObjectUtils;
 import app.notifee.core.utility.PowerManagerUtils;
@@ -605,6 +606,9 @@ class NotificationManager {
             case 1:
               createIntervalTriggerNotification(notificationModel, triggerBundle);
               break;
+            case 2:
+              createWindowTriggerNotification(notificationModel, triggerBundle);
+              break;
           }
 
           EventBus.post(
@@ -698,6 +702,13 @@ class NotificationManager {
       workManager.enqueueUniquePeriodicWork(
           uniqueWorkName, ExistingPeriodicWorkPolicy.UPDATE, workRequestBuilder.build());
     }
+  }
+
+  static void createWindowTriggerNotification(
+      NotificationModel notificationModel, Bundle triggerBundle) {
+    WindowTriggerModel trigger = WindowTriggerModel.fromBundle(triggerBundle);
+
+    NotifeeAlarmManager.scheduleWindowTriggerNotification(notificationModel, trigger);
   }
 
   static Task<List<Bundle>> getDisplayedNotifications() {
