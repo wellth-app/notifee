@@ -19,9 +19,11 @@ import {
   TriggerType,
   TimestampTriggerAlarmManager,
   AlarmType,
+  WindowTrigger,
 } from '../types/Trigger';
 
 const MINIMUM_INTERVAL = 15;
+const MINIMUM_WINDOW_MS = 10 * 60 * 1000;
 
 function isMinimumInterval(interval: number, timeUnit: any): boolean {
   switch (timeUnit) {
@@ -47,6 +49,8 @@ export default function validateTrigger(trigger: Trigger): Trigger {
       return validateTimestampTrigger(trigger);
     case TriggerType.INTERVAL:
       return validateIntervalTrigger(trigger);
+    case TriggerType.WINDOW:
+      return validateWindowTrigger(trigger);
     default:
       throw new Error('Unknown trigger type');
   }
@@ -137,6 +141,37 @@ function validateIntervalTrigger(trigger: IntervalTrigger): IntervalTrigger {
   if (!isMinimumInterval(trigger.interval, out.timeUnit)) {
     throw new Error("'trigger.interval' expected to be at least 15 minutes.");
   }
+
+  return out;
+}
+
+function validateWindowTrigger(trigger: WindowTrigger): WindowTrigger {
+
+
+  if (!isNumber(trigger.timestamp)) {
+    throw new Error("'trigger.timestamp' expected a number value.");
+  }
+
+  if(!isNumber(trigger.windowDuration)) {
+    throw new Error("'trigger.windowDuration' expected a number value.");
+  }
+
+  if (trigger.windowDuration < MINIMUM_WINDOW_MS) {
+    trigger.windowDuration = MINIMUM_WINDOW_MS;
+  }
+
+  const now = Date.now();
+  if (trigger.timestamp <= now) {
+    throw new Error("'trigger.timestamp' date must be in the future.");
+  }
+
+  
+
+  const out: WindowTrigger = {
+    type: trigger.type,
+    timestamp: trigger.timestamp,
+    windowDuration: trigger.windowDuration
+  };
 
   return out;
 }
